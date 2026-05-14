@@ -16,7 +16,14 @@ def compute_kpis(df: pd.DataFrame) -> pd.DataFrame:
         df["Transfer_Efficiency"] = np.nan
 
     if "HHS_Discharges" in df.columns and "HHS_In_Care" in df.columns:
-        df["Discharge_Effectiveness"] = np.where(df["HHS_In_Care"] > 0, df["HHS_Discharges"] / df["HHS_In_Care"], np.nan)
+         df['Discharge_Effectiveness'] = np.where(
+    df['Children_In_HHS_Care'] > 0,
+    (
+        df['HHS_Discharges']
+        / df['Children_In_HHS_Care']
+    ) * 100,
+    np.nan
+)
     else:
         df["Discharge_Effectiveness"] = np.nan
 

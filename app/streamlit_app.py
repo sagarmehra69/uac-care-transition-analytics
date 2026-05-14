@@ -205,20 +205,40 @@ for col in ['HHS_In_Care', 'HHS_Discharges', 'CBP_Apprehensions']:
         # Interpolate bridges the gaps between dots, making the graph a smooth, continuous line!
         df_filtered[col] = df_filtered[col].interpolate(method='linear').ffill().bfill()
 
+
 #  KPI CALCULATION (This is where we compute all the key metrics that will feed into the dashboard and bottleneck detection logic)
 df_kpi = cached_compute_kpis(df_filtered)
 
-# 5. MATH RESCUE FOR DISCHARGE EFFECTIVENESS ) 
+# 5. MATH RESCUE FOR DISCHARGE EFFECTIVENESS
+
 if 'HHS_In_Care' in df_kpi.columns and 'HHS_Discharges' in df_kpi.columns:
-    # Ensure both columns are numeric before calculating to prevent math errors
-    hhs_in_care = pd.to_numeric(df_kpi['HHS_In_Care'], errors='coerce')
-    hhs_discharges = pd.to_numeric(df_kpi['HHS_Discharges'], errors='coerce')
-    
-    df_kpi['Discharge_Effectiveness'] = np.where(
-        (hhs_in_care > 0) & hhs_in_care.notna() & hhs_discharges.notna(),
-        hhs_discharges / hhs_in_care,
-        np.nan 
+
+    # Ensure numeric conversion
+    hhs_in_care = pd.to_numeric(
+        df_kpi['HHS_In_Care'],
+        errors='coerce'
     )
+
+    hhs_discharges = pd.to_numeric(
+        df_kpi['HHS_Discharges'],
+        errors='coerce'
+    )
+
+    # Safe percentage calculation
+    df_kpi['Discharge_Effectiveness'] = np.where(
+        (hhs_in_care > 0)
+        & hhs_in_care.notna()
+        & hhs_discharges.notna(),
+
+        (hhs_discharges / hhs_in_care) * 100,
+
+        np.nan
+    )
+
+    df_kpi['Discharge_Effectiveness'] = (
+    df_kpi['Discharge_Effectiveness']
+    .replace([np.inf, -np.inf], np.nan)
+)
 
 # 6. BOTTLENECK DETECTION (- it flags periods of operational strain based on the defined thresholds and sustained durations)    
 try:
