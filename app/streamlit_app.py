@@ -36,6 +36,10 @@ from src.visualization import (
     backlog_chart, bottleneck_heatmap, outcome_stability_chart, monthly_summary_chart,
 )
 from src.utils import generate_insights, generate_recommendations
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parents[1]
+DATA_PATH = BASE_DIR / "data" / "HHS_Unaccompanied_Alien_Children_Program.csv"
+df = pd.read_csv(DATA_PATH)
 
 @st.cache_data(show_spinner=False)
 def cached_clean_data(df):
@@ -61,6 +65,8 @@ st.set_page_config(
 
 load_css()
 
+
+
 # SIDEBAR 
 
 with st.sidebar:
@@ -80,8 +86,7 @@ with st.sidebar:
             except Exception as e:
                 st.error(f"{e}")
     else:
-        default_path = os.path.join(os.path.dirname(__file__), "..", "data",
-                                    "HHS_Unaccompanied_Alien_Children_Program.csv")
+        default_path = DATA_PATH
         if os.path.exists(default_path):
             try:
                 raw_df = load_data(default_path)
@@ -211,9 +216,12 @@ df_kpi = cached_compute_kpis(df_filtered)
 
 # 5. MATH RESCUE FOR DISCHARGE EFFECTIVENESS
 
+
+
+# SAFE DISCHARGE EFFECTIVENESS CALCULATION
+
 if 'HHS_In_Care' in df_kpi.columns and 'HHS_Discharges' in df_kpi.columns:
 
-    # Ensure numeric conversion
     hhs_in_care = pd.to_numeric(
         df_kpi['HHS_In_Care'],
         errors='coerce'
@@ -224,7 +232,6 @@ if 'HHS_In_Care' in df_kpi.columns and 'HHS_Discharges' in df_kpi.columns:
         errors='coerce'
     )
 
-    # Safe percentage calculation
     df_kpi['Discharge_Effectiveness'] = np.where(
         (hhs_in_care > 0)
         & hhs_in_care.notna()
@@ -235,10 +242,13 @@ if 'HHS_In_Care' in df_kpi.columns and 'HHS_Discharges' in df_kpi.columns:
         np.nan
     )
 
+    # cleanup
     df_kpi['Discharge_Effectiveness'] = (
-    df_kpi['Discharge_Effectiveness']
-    .replace([np.inf, -np.inf], np.nan)
-)
+        df_kpi['Discharge_Effectiveness']
+        .replace([np.inf, -np.inf], np.nan)
+    )
+
+
 
 # 6. BOTTLENECK DETECTION (- it flags periods of operational strain based on the defined thresholds and sustained durations)    
 try:
@@ -257,6 +267,7 @@ except Exception as e:
         "Critical_Alert", "Severity_Score",
         "Any_Bottleneck"  
     ]
+    
     
     # Add missing bottleneck columns with default values to prevent downstream errors in the dashboard, even if we can't calculate them for this date range
     for col in safe_columns:
@@ -278,6 +289,7 @@ monthly = cached_monthly_aggregates(df_full)
 # Monthly Table 
 if 'Discharge_Effectiveness' in monthly.columns:
     monthly['Discharge_Effectiveness'] = monthly['Discharge_Effectiveness'].fillna(0)
+
 
 
 # KPI CARDS 
