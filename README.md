@@ -9,7 +9,7 @@
 ---
 
 ## 🌐 Live Dashboard
-🔗 **Application Link:** [![Live App](https://img.shields.io/badge/Live-Dashboard-success?style=for-the-badge&logo=streamlit)](https://uac-care-transition-analytics-gs5voaajtvshx3psqheer7.streamlit.app/)
+ [![Live App](https://img.shields.io/badge/Live-Dashboard-success?style=for-the-badge&logo=streamlit)](https://uac-care-transition-analytics-gs5voaajtvshx3psqheer7.streamlit.app/)
 
 ---
 
