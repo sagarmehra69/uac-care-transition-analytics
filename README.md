@@ -181,6 +181,8 @@ care-transition-analytics/
 │   └── visualization.py
 │
 ├── .gitignore
+├── LICENSE
+├── packages.txt
 ├── README.md
 └── requirements.txt
 ```
