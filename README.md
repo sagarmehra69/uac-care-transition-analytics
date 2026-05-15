@@ -340,6 +340,7 @@ If you found this project valuable:
 
 ## 👨‍💻 Author
 
-**Sagar Mehra**  
+***Sagar Mehra***
+
 🔗 LinkedIn: https://www.linkedin.com/in/sagar-mehra69-data
 ---
