@@ -1,9 +1,19 @@
-streamlit 
-pandas
-numpy
-plotly
-matplotlib
-seaborn
-scikit-learn
-prophet
-pillow      
+numpy==1.26.4
+pandas==2.1.4
+pyarrow==14.0.2
+
+# ── Streamlit ────────────────────────────────────────────────────────────────
+streamlit==1.35.0
+
+# ── Visualisation ────────────────────────────────────────────────────────────
+plotly==5.22.0
+matplotlib==3.8.4
+seaborn==0.13.2
+kaleido==0.2.1
+
+# ── ML / Forecasting ─────────────────────────────────────────────────────────
+scikit-learn==1.4.2
+prophet==1.1.5
+
+# ── Utilities ────────────────────────────────────────────────────────────────
+Pillow==10.3.0
