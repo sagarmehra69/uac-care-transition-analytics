@@ -15,15 +15,35 @@ def compute_kpis(df: pd.DataFrame) -> pd.DataFrame:
     else:
         df["Transfer_Efficiency"] = np.nan
 
+     # SAFE DISCHARGE EFFECTIVENESS
+
     if "HHS_Discharges" in df.columns and "HHS_In_Care" in df.columns:
-         df['Discharge_Effectiveness'] = np.where(
-    df['Children_In_HHS_Care'] > 0,
-    (
-        df['HHS_Discharges']
-        / df['Children_In_HHS_Care']
-    ) * 100,
-    np.nan
-)
+
+        hhs_in_care = pd.to_numeric(
+        df["HHS_In_Care"],
+        errors="coerce"
+    )
+
+        hhs_discharges = pd.to_numeric(
+         df["HHS_Discharges"],
+         errors="coerce"
+    )
+
+        df["Discharge_Effectiveness"] = np.where(
+          (hhs_in_care > 0)
+          & hhs_in_care.notna()
+          & hhs_discharges.notna(),
+
+        (hhs_discharges / hhs_in_care) * 100,
+
+        np.nan
+    )
+
+        df["Discharge_Effectiveness"] = (
+        df["Discharge_Effectiveness"]
+        .replace([np.inf, -np.inf], np.nan)
+    )    
+         
     else:
         df["Discharge_Effectiveness"] = np.nan
 
